@@ -6,3 +6,4 @@ humanize
 textual
 thefuzz
 rapidfuzz
+questionary
