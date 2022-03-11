@@ -32,7 +32,7 @@ The documentation is currently available at [DOCUMENTATION.md](https://github.co
 
 ## Contributing
 
-If anything feels off, or if you feel that some functionality is missing, please consider opening an issue or a pull request
+If anything feels off, or if you feel that some functionality is missing, please consider opening an issue or a pull request. See [TODO.md](https://github.com/dracula/dracula-cli/blob/main/TODO.md) for inspiration
 
 
 ## Team
