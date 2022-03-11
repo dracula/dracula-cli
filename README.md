@@ -6,7 +6,7 @@
 
 ## Installation
 
-The easiest way to install `dracula-cli` is to install it with [pip](https://pypi.org/project/pip/ "pip is the package installer for Python."). Note that you'll need to have python version 3.6 or later installed. To install, run the following command in a terminal:
+The easiest way to install `dracula-cli` is to install it with [pip](https://pypi.org/project/pip/ "pip is the package installer for Python."). Note that you'll need to have [python](https://python.org "Python is a high-level, general-purpose programming language.") version 3.6 or later installed. To install, run the following command in a terminal:
 
 ```sh
 pip install dracula-cli
@@ -32,7 +32,7 @@ The documentation is currently available at [DOCUMENTATION.md](https://github.co
 
 ## Contributing
 
-If anything feels off, or if you feel that some functionality is missing, please consider opening an issue or a pull request
+If anything feels off, or if you feel that some functionality is missing, please consider opening an issue or a pull request. See [TODO.md](https://github.com/dracula/dracula-cli/blob/main/TODO.md) for inspiration
 
 
 ## Team

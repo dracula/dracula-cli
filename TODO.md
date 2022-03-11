@@ -1,6 +1,7 @@
 # TODO
 
 - [ ] Add demo GIFs to the documentation
+- [ ] Add a demo screenshot
 
 ## BACKLOG
 
