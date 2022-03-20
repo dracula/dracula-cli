@@ -591,5 +591,6 @@ def format_language(language: str) -> str:
     """Format a language based on it's color used by github"""
     if language in LANGUAGE_COLORS:
         color, url = LANGUAGE_COLORS[language].values()
-        return f"[{'white' if is_dark(color[1:]) else 'black'} on {color} link={url}]{language}[/]"
+        if color:
+            return f"[{'white' if is_dark(color[1:]) else 'black'} on {color} link={url}]{language}[/]"
     return language
