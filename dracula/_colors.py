@@ -3,7 +3,10 @@ Tools and utilities for programming language color shenanigans
 """
 # Colors for programming languages used by github.
 # Taken from https://github.com/ozh/github-colors
-LANGUAGE_COLORS = {
+from typing import Dict, Optional
+
+
+LANGUAGE_COLORS: Dict[Optional[str], Dict[str, Optional[str]]] = {
     "1C Enterprise": {"color": "#814CCC", "url": "https://github.com/trending?l=1C-Enterprise"},
     "2-Dimensional Array": {"color": "#38761D", "url": "https://github.com/trending?l=2-Dimensional-Array"},
     "4D": {"color": "#004289", "url": "https://github.com/trending?l=4D"},
@@ -574,7 +577,7 @@ LANGUAGE_COLORS = {
 
 LANGUAGE_COLORS[None] = {"color": "#000000", "url": None}
 
-def is_dark(color):
+def is_dark(color: str) -> bool:
     """
     Whether the given color is dark of bright
 
@@ -584,7 +587,7 @@ def is_dark(color):
     return False if l / 255 > 0.65 else True
 
 
-def format_language(language):
+def format_language(language: str) -> str:
     """Format a language based on it's color used by github"""
     if language in LANGUAGE_COLORS:
         color, url = LANGUAGE_COLORS[language].values()

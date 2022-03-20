@@ -2,6 +2,7 @@ import datetime as dt
 import math
 import os
 import os.path
+from typing import List, Optional
 
 import click
 import humanize
@@ -31,7 +32,7 @@ from ._utils import get_closest_clock_emoji, datetime_from_utc_to_local
 from ._downloader import download_files
 
 
-def _get_github_readme(repo: str):
+def _get_github_readme(repo: str) -> Optional[str]:
     """Get the github readme contents for a particular repository"""
     # Get the readme path from github since the readme file and extension is case insensitive
     readme = session.get(f"https://api.github.com/repos/{repo}/readme").json()
@@ -44,7 +45,7 @@ def _get_github_readme(repo: str):
     return
 
 
-def _get_install_guide(repo: str):
+def _get_install_guide(repo: str) -> Optional[str]:
     """Get the install guide for a particular dracula supported app"""
     # Since each repo has a INSTALL.md file with instructions, we can safely get the contents of the INSTALL.md file
     content = session.get(f"https://raw.githubusercontent.com/{repo}/master/INSTALL.md")
@@ -53,7 +54,7 @@ def _get_install_guide(repo: str):
     return
 
 
-def _generate_formatted_time(iso_8601_time: dt.datetime, title: str, delta_first: bool = True):
+def _generate_formatted_time(iso_8601_time: dt.datetime, title: str, delta_first: bool = True) -> str:
     """Convert a datetime object to a human readable time"""
     # Parse the time given to us
     time = dt.datetime.strptime(iso_8601_time, "%Y-%m-%dT%H:%M:%SZ")
@@ -70,7 +71,7 @@ def _generate_formatted_time(iso_8601_time: dt.datetime, title: str, delta_first
                f"{humanize.naturaldate(datetime_from_utc_to_local(time))} ({humanize.naturaldelta(delta)})\n"
 
 
-def _generate_contributors_data(url: str):
+def _generate_contributors_data(url: str) -> str:
     """Get the contributors of a repository given it's api url"""
     response = session.get(url)
     if response.status_code != 200:
@@ -92,7 +93,7 @@ def _generate_contributors_data(url: str):
     )
 
 
-def _get_org_repo_count(org_name):
+def _get_org_repo_count(org_name: str) -> int:
     """Get how many apps are supported by dracula"""
     url = f"https://api.github.com/orgs/{org_name}"
     response = session.get(url)
@@ -103,7 +104,7 @@ def _get_org_repo_count(org_name):
     return response_json.get("public_repos", 300)
 
 
-def _render_tree(repo, file_list, path="."):
+def _render_tree(repo:str, file_list, path: str =".") -> Tree:
     """Render a git repo's files in a tree"""
     url = f"https://api.github.com/repos/{repo}/contents/{path}"
     response = session.get(url)
@@ -139,11 +140,11 @@ session = CachedSession(
     cache_path,
     backend="sqlite",
     urls_expire_after={
-        f"https://api.github.com/repo": 21_600,  # 6 hours
-        f"https://api.github.com/orgs": 10_800,  # 3 hours
-        f"https://api.github.com/contributors": 86_400,  # 24 hours
-        f"https://raw.githubusercontent.com/dracula/template/master/sample": 7_890_000,  # 3 months
-        f"https://raw.githubusercontent.com/dracula/*": 86_400,  # 24 hours
+        "https://api.github.com/repo": 21_600,  # 6 hours
+        "https://api.github.com/orgs": 10_800,  # 3 hours
+        "https://api.github.com/contributors": 86_400,  # 24 hours
+        "https://raw.githubusercontent.com/dracula/template/master/sample": 7_890_000,  # 3 months
+        "https://raw.githubusercontent.com/dracula/*": 86_400,  # 24 hours
     },
     headers={"User-Agent": "wasi_master/dracula-cli"},
 )
@@ -159,7 +160,7 @@ def main(
     ),
 ):
     if token:
-        session.headers.update({"Authorization": "Token {}".format(token)})
+        session.headers.update({"Authorization": f"Token {token}"})
 
 
 @app.command()
@@ -203,7 +204,7 @@ def all(
                 console.print(
                     Panel(
                         f"Error {response.status_code}{f': {message}' if message else ''}",
-                        title=f"Could not load",
+                        title="Could not load",
                         border_style="#ff5555",
                         title_align="left",
                     )
@@ -247,10 +248,10 @@ def all(
         apps,
         # Available values: name, stars, forks, size, watchers, language, issues,
         #                   created_at, updated_at, pushed_at
-        key=lambda d: d[sort_aliases[sort] if sort in sort_aliases else sort],
+        key=lambda d: d[sort_aliases.get(sort, sort)],
         # Only do reversed sort for names since people usually want A-Z.
         # for other things such as stars, people usually want highest to lowest
-        reverse=True if sort != "name" else False,
+        reverse=sort != "name",
     )
     #fmt: on
 
@@ -434,7 +435,7 @@ def download(app: str = typer.Argument(..., help="The name of the app to view"))
 
     github_files = []
     # Render a rich tree for better understanding of the directory structure
-    tree = _render_tree("dracula/" + app, github_files)
+    tree = _render_tree(f"dracula/{app}", github_files)
     console.print(tree)
 
     files = questionary.checkbox("Which file(s) do you want to download?", github_files).ask()
@@ -450,5 +451,5 @@ def download(app: str = typer.Argument(..., help="The name of the app to view"))
     # Ask for confirmation before downloading the file
     confirmed = questionary.confirm(f"Are you sure you want to download {files} to {download_path} ")
     if confirmed:
-        file_urls = map(lambda x: f"https://raw.githubusercontent.com/dracula/{app}/master/" + x, files)
+        file_urls = [f"https://raw.githubusercontent.com/dracula/{app}/master/{lib}" for lib in files]
         download_files(file_urls, dest_dir=download_path)
