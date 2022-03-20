@@ -54,10 +54,13 @@ def _get_install_guide(repo: str) -> Optional[str]:
     return
 
 
-def _generate_formatted_time(iso_8601_time: dt.datetime, title: str, delta_first: bool = True) -> str:
+def _generate_formatted_time(iso_8601_time: Optional[str], title: str, delta_first: bool = True) -> str:
     """Convert a datetime object to a human readable time"""
     # Parse the time given to us
-    time = dt.datetime.strptime(iso_8601_time, "%Y-%m-%dT%H:%M:%SZ")
+    if iso_8601_time:
+        time = dt.datetime.strptime(iso_8601_time, "%Y-%m-%dT%H:%M:%SZ")
+    else:
+        time = dt.datetime.fromtimestamp(0)
     # Get the clock emoji that most closely matches the time given
     closest_clock_emoji = get_closest_clock_emoji(time)
     # Calculate the amount of time that has passed since the time given
@@ -269,13 +272,9 @@ def all(
                     f":abc: Language: {format_language(repo.get('language', 'N/A'))}\n"
                     f":bug: Issues Open: {repo.get('open_issues_count', 'N/A')}\n"
                     f":scroll: License: {repo['license']['name'] if repo['license'] else 'Not Specified'}\n"
-                    + _generate_formatted_time(
-                        repo.get("created_at", dt.datetime.fromtimestamp(0)), title="Created At", delta_first=False
-                    )
-                    + _generate_formatted_time(
-                        repo.get("updated_at", dt.datetime.fromtimestamp(0)), title="Last updated"
-                    )
-                    + _generate_formatted_time(repo.get("pushed_at", dt.datetime.fromtimestamp(0)), title="Last pushed")
+                    + _generate_formatted_time(repo.get("created_at"), title="Created At", delta_first=False)
+                    + _generate_formatted_time(repo.get("updated_at"), title="Last updated")
+                    + _generate_formatted_time(repo.get("pushed_at"), title="Last pushed")
                 ),
                 title=f"[link=https://draculatheme.com/{repo.get('name')}]{repo.get('name')}[/]",
             )
