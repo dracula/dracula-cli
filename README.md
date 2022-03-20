@@ -19,7 +19,7 @@ You may want to replace `pip` with `pip3` if this fails.
 > **Note:** There are several parameters you can tweak to change the behavior of the following commands
 
 ```sh
-dracula view visual-studio-code
+dracula show visual-studio-code
 ```
 
 ```sh
