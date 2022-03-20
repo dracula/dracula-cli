@@ -3,9 +3,10 @@ Utility functions
 """
 from datetime import datetime, timedelta
 import time
+from typing import Generic, Sequence, TypeVar
 
 
-def ceil_dt(dt: datetime, delta: timedelta =timedelta(minutes=30)) -> datetime:
+def ceil_dt(dt: datetime, delta: timedelta = timedelta(minutes=30)) -> datetime:
     """Ceils a datetime to the nearest timedelta
 
     Parameters
@@ -85,23 +86,26 @@ def datetime_from_utc_to_local(utc_datetime: datetime) -> datetime:
     return utc_datetime + offset
 
 
-class cycle:
-    def __init__(self, c):
+T = TypeVar("T")
+
+
+class cycle(Generic[T]):
+    def __init__(self, c: Sequence[T]):
         self._c = c
         self._index = -1
 
-    def __next__(self):
+    def __next__(self) -> T:
         self._index += 1
         if self._index >= len(self._c):
             self._index = 0
         return self._c[self._index]
 
-    def __previous__(self):
+    def __previous__(self) -> T:
         self._index -= 1
         if self._index < 0:
             self._index = len(self._c) - 1
         return self._c[self._index]
 
 
-def previous(c: cycle):
+def previous(c: cycle[T]) -> T:
     return c.__previous__()

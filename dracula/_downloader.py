@@ -4,11 +4,11 @@ Taken from https://github.com/Textualize/rich/blob/master/examples/downloader.py
 import os
 import os.path
 import sys
-from concurrent.futures import as_completed, ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor
 import signal
 from functools import partial
 from threading import Event
-from typing import Iterable
+from typing import Sequence
 from urllib.request import urlopen
 
 from rich.progress import (
@@ -61,7 +61,7 @@ def copy_url(task_id: TaskID, url: str, path: str) -> None:
                 return
 
 
-def download_files(urls, dest_dir):
+def download_files(urls: Sequence[str], dest_dir: str) -> None:
     """Download multuple files to the given directory."""
 
     os.makedirs(dest_dir, exist_ok=True)
@@ -78,6 +78,6 @@ def download_files(urls, dest_dir):
 if __name__ == "__main__":
     # Try with https://releases.ubuntu.com/20.04/ubuntu-20.04.3-desktop-amd64.iso
     if sys.argv[1:]:
-        download(sys.argv[1:], "./")
+        download_files(sys.argv[1:], "./")
     else:
         print("Usage:\n\tpython downloader.py URL1 URL2 URL3 (etc)")
